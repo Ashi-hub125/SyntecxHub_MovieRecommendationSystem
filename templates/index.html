@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 400px;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        ul {
+            text-align: left;
+            padding-left: 0;
+            margin-top: 20px;
+        }
+        li {
+            list-style: none;
+            background: #f9f9f9;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        /* Add full-page background image */
+body {
+    background-image: url('/static/img.jpeg');  
+    background-position: center;       
+    background-size: cover;            
+    background-repeat: no-repeat;      
+    background-attachment: fixed;     
+}
+
+/* Container for content */
+.container {
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent for readability */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Movie Recommendation</h1>
+    <input type="text" id="movieTitle" placeholder="Enter Movie Name">
+    <button onclick="getRecommendations()">Recommend</button>
+    
+    <ul id="recommendations"></ul>
+</div>
+
+<script>
+async function getRecommendations() {
+    const title = document.getElementById("movieTitle").value;
+    const ul = document.getElementById("recommendations");
+    ul.innerHTML = "";
+
+    if (!title) {
+        alert("Please enter a movie title!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/recommend?title=${encodeURIComponent(title)}`);
+        const data = await response.json();
+
+        if (typeof data === "string") {
+            ul.innerHTML = `<li>${data}</li>`;
+        } else {
+            data.forEach(movie => {
+                const li = document.createElement("li");
+                li.textContent = `${movie.title} (${movie.genres})`;
+                ul.appendChild(li);
+            });
+        }
+    } catch (error) {
+        ul.innerHTML = `<li>Error fetching recommendations</li>`;
+        console.error(error);
+    }
+}
+</script>
+
+</body>
+</html>
